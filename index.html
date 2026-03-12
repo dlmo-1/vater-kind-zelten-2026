@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anmeldung Vater-Kind-Zelten 2026 – Haranni</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body class="bg-zinc-100 py-8 md:py-12">
+    <div class="max-w-3xl mx-auto bg-white shadow-2xl rounded-3xl overflow-hidden">
+
+        <!-- HEADER -->
+        <div class="flex flex-col md:flex-row justify-between items-start bg-white border-b p-6 md:p-8 gap-4">
+            <div>
+                <p class="text-sm text-gray-600">Ev. Kirchengemeinde Haranni</p>
+                <p class="text-sm text-gray-600">Zentrales Gemeindebüro, Europaplatz 2, 44623 Herne</p>
+                <p class="text-sm text-gray-600">Tel. 02323 12499 • haranni@ekvw.de</p>
+            </div>
+            <div class="text-right">
+                <img src="https://i.postimg.cc/CK7gRm4s/Logo-Harani1.jpg" alt="Ev. Kirchengemeinde Haranni" class="h-20 md:h-28 mx-auto md:mx-0">
+            </div>
+        </div>
+
+        <!-- ZAHLUNGS-INFO -->
+        <div class="mx-6 md:mx-10 mt-8 bg-purple-50 border border-purple-200 rounded-3xl p-6 md:p-8">
+            <h2 class="text-2xl font-bold text-center text-purple-700 mb-6">Zahlungsinformationen</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm">
+                <div>
+                    <strong>Preise:</strong><br>
+                    Vater: 85 €<br>
+                    1 Kind: 45 € • 2 Kinder: 65 € • 3 Kinder: 80 € • 4 Kinder: 95 €
+                </div>
+                <div>
+                    <strong>Überweisung bis 01.06.2026</strong><br>
+                    Ev. Kirchenkreis Herne<br>
+                    IBAN: <span class="font-mono">DE05 3506 0190 2001 1420 22</span><br>
+                    Verwendungszweck: VKZ 2026 + Ihr Name
+                </div>
+            </div>
+            <p class="text-center mt-6 text-purple-700 font-medium text-sm md:text-base">
+                Abfahrt: 26. Juni 2026 um 15 Uhr vor der Emmaus-Kirche (bitte wenn möglich um 13:30 Uhr zum Beladen kommen)
+            </p>
+        </div>
+
+        <!-- ZELT-HINWEIS -->
+        <div class="mx-6 md:mx-10 mt-6 bg-amber-50 border border-amber-300 rounded-3xl p-6 text-center font-medium text-lg leading-relaxed">
+            Bitte denkt daran, Euer eigenes Zelt (zur Not auch Camper) mitzunehmen, da wir von diesem Jahr an kein Gemeinschaftsschlafzelt mehr dabeihaben werden!
+        </div>
+
+        <!-- FORMULAR -->
+        <form id="anmeldung-form" action="https://formsubmit.co/haranni@ekvw.de" method="POST" class="p-6 md:p-10 space-y-8">
+            <input type="hidden" name="_subject" value="Neue Anmeldung VKZ 2026">
+            <input type="hidden" name="_captcha" value="false">
+
+            <!-- Vater -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div><label class="block text-sm font-semibold text-gray-700 mb-2">Vorname (Vater) *</label><input type="text" id="vater_vn" required class="w-full px-4 py-3 border border-gray-300 rounded-2xl" oninput="updateEverything()"></div>
+                <div><label class="block text-sm font-semibold text-gray-700 mb-2">Nachname (Vater) *</label><input type="text" id="vater_nn" required class="w-full px-4 py-3 border border-gray-300 rounded-2xl" oninput="updateEverything()"></div>
+            </div>
+
+            <!-- Kinder -->
+            <div id="kinder-container" class="space-y-8"></div>
+
+            <button type="button" onclick="addChild()" class="text-purple-700 underline font-medium">
+                + Weiteres Kind hinzufügen
+            </button>
+
+            <!-- Vegetarische Bratwurst -->
+            <div class="bg-amber-50 border border-amber-300 p-6 rounded-3xl">
+                <p class="font-semibold text-gray-700 mb-4">Vegetarische Bratwurst benötigt für:</p>
+                <div id="veggie-list" class="space-y-3"></div>
+            </div>
+
+            <!-- Live-Preis -->
+            <div id="preisbox" class="mt-8 bg-white border border-purple-200 rounded-2xl p-6 text-center font-semibold text-xl">
+                Ihr Gesamtbeitrag: <span id="gesamtpreis" class="text-purple-700">85 €</span>
+            </div>
+
+            <!-- QR-Code -->
+            <div id="qr-section" class="mt-6 text-center">
+                <p class="text-sm font-semibold mb-3">QR-Code scannen & direkt überweisen 👇 (passt sich automatisch an)</p>
+                <img id="qr-code" src="https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=BCD%0A001%0A1%0ASCT%0A%0AEv.%20Kirchenkreis%20Herne%0ADE05350601902001142022%0AEUR85.00%0A%0AVKZ%202026%20%2B%20Ihr%20Name" alt="EPC QR-Code" class="mx-auto border-8 border-white shadow-2xl rounded-3xl">
+                <button onclick="copyIBAN()" class="mt-6 w-full bg-white border border-purple-300 hover:bg-purple-50 text-purple-700 font-semibold py-4 rounded-3xl transition text-base">
+                    📋 IBAN in die Zwischenablage kopieren
+                </button>
+            </div>
+
+            <!-- Adresse + Mail -->
+            <div><label class="block text-sm font-semibold text-gray-700 mb-2">(Straße, Hausnummer, Ort) *</label><input type="text" name="Adresse" required class="w-full px-4 py-3 border border-gray-300 rounded-2xl"></div>
+            <div><label class="block text-sm font-semibold text-gray-700 mb-2">(Mailadresse) *</label><input type="email" name="email" required class="w-full px-4 py-3 border border-gray-300 rounded-2xl"></div>
+
+            <!-- Fotoerlaubnis -->
+            <div class="bg-amber-50 border border-amber-200 p-6 rounded-3xl text-xs">
+                <label class="flex items-start gap-3 cursor-pointer">
+                    <input type="checkbox" name="Fotoerlaubnis" required class="mt-1 w-5 h-5 accent-purple-700">
+                    <span><strong>Fotoerlaubnis:</strong> Hiermit erteile/n ich/wir der Evangelischen Haranni Kirchengemeinde Herne die Erlaubnis, Fotos zu erstellen und zu veröffentlichen. [vollständiger Originaltext]</span>
+                </label>
+            </div>
+
+            <button type="submit" class="w-full bg-purple-700 hover:bg-purple-800 text-white font-semibold py-5 rounded-3xl text-xl transition">
+                Anmeldung verbindlich absenden
+            </button>
+        </form>
+
+        <!-- DANKES-SEITE -->
+        <div id="thankyou" class="hidden p-12 text-center">
+            <div class="text-6xl mb-6">🎉</div>
+            <h2 class="text-4xl font-bold text-purple-700">Vielen Dank für Ihre Anmeldung!</h2>
+            <p class="mt-4 text-xl">Eine Bestätigungs-E-Mail ist bereits unterwegs.</p>
+
+            <div class="mt-10">
+                <p class="text-sm font-semibold mb-4">QR-Code zum Bezahlen:</p>
+                <img id="thankyou-qr" class="mx-auto border-8 border-white shadow-2xl rounded-3xl" style="width:290px;height:290px;">
+            </div>
+
+            <div class="mt-8 space-y-4">
+                <button onclick="downloadQR()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-5 rounded-3xl text-xl transition">
+                    📸 QR-Code als Bild speichern
+                </button>
+                <button onclick="shareQR()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-5 rounded-3xl text-xl transition">
+                    🔗 QR-Code teilen
+                </button>
+                <button onclick="generatePDF()" class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-5 rounded-3xl text-xl transition">
+                    📄 PDF herunterladen
+                </button>
+            </div>
+
+            <div class="mt-10 bg-yellow-50 border border-yellow-200 p-6 rounded-2xl text-left text-sm">
+                <strong>Tipp fürs Handy:</strong><br>
+                Mache einfach einen Screenshot vom QR-Code oben.<br>
+                Dann öffne deine Banking-App → QR scannen → „Aus Fotos wählen“.
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let kinderCount = 0;
+        let currentName = "";
+        let currentBetrag = 85;
+
+        function addChild() {
+            kinderCount++;
+            const container = document.getElementById('kinder-container');
+            const div = document.createElement('div');
+            div.className = 'bg-zinc-50 p-6 rounded-2xl';
+            div.innerHTML = `
+                <div class="font-medium text-purple-700 mb-3">Kind ${kinderCount}</div>
+                <div class="grid grid-cols-3 gap-3">
+                    <div><label class="block text-xs font-medium">Vorname</label><input type="text" class="child-vn w-full px-4 py-3 border border-gray-300 rounded-2xl" oninput="updateEverything()"></div>
+                    <div><label class="block text-xs font-medium">Nachname</label><input type="text" class="child-nn w-full px-4 py-3 border border-gray-300 rounded-2xl" oninput="updateEverything()"></div>
+                    <div class="col-span-3">
+                        <label class="block text-xs font-medium mb-1">Geburtstag</label>
+                        <div class="grid grid-cols-3 gap-3">
+                            <div><input type="number" min="1" max="31" class="child-tag w-full px-4 py-3 border border-gray-300 rounded-2xl" placeholder="TT"></div>
+                            <div><input type="number" min="1" max="12" class="child-monat w-full px-4 py-3 border border-gray-300 rounded-2xl" placeholder="MM"></div>
+                            <div><input type="number" min="2000" max="2026" class="child-jahr w-full px-4 py-3 border border-gray-300 rounded-2xl" placeholder="JJJJ"></div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            container.appendChild(div);
+            updateEverything();
+        }
+
+        function updateEverything() {
+            updatePriceAndQR();
+            updateVeggieList();
+        }
+
+        function updatePriceAndQR() {
+            const count = document.querySelectorAll('#kinder-container > div').length;
+            const preise = [85, 130, 150, 165, 180];
+            currentBetrag = preise[count] || 180;
+            document.getElementById('gesamtpreis').textContent = currentBetrag + " €";
+
+            currentName = `${document.getElementById('vater_vn').value || ''} ${document.getElementById('vater_nn').value || ''}`.trim() || "Ihr Name";
+
+            const qrText = `BCD
+001
+1
+SCT
+
+Ev. Kirchenkreis Herne
+DE05350601902001142022
+EUR${currentBetrag}.00
+
+VKZ 2026 + ${currentName}`;
+            const encoded = encodeURIComponent(qrText);
+            document.getElementById('qr-code').src = `https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=${encoded}`;
+        }
+
+        function updateVeggieList() {
+            const list = document.getElementById('veggie-list');
+            list.innerHTML = '';
+
+            const vaterName = `${document.getElementById('vater_vn').value || ''} ${document.getElementById('vater_nn').value || ''}`.trim() || 'Vater';
+            list.innerHTML += `<label class="flex items-center gap-3"><input type="checkbox" class="w-5 h-5 accent-purple-700"> ${vaterName} (Vater)</label>`;
+
+            const children = document.querySelectorAll('#kinder-container > div');
+            children.forEach((c, i) => {
+                const vn = c.querySelector('.child-vn').value || '';
+                const nn = c.querySelector('.child-nn').value || '';
+                const name = `${vn} ${nn}`.trim() || `Kind ${i+1}`;
+                list.innerHTML += `<label class="flex items-center gap-3"><input type="checkbox" class="w-5 h-5 accent-purple-700"> ${name}</label>`;
+            });
+        }
+
+        function generatePDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            doc.setFontSize(18);
+            doc.text("Anmeldung Vater-Kind-Zelten 2026", 20, 20);
+            doc.save("Zahlungsinformationen_VKZ2026.pdf");
+        }
+
+        function downloadQR() {
+            const link = document.createElement('a');
+            link.download = 'QR-Zahlung_VKZ2026.png';
+            link.href = document.getElementById('thankyou-qr').src;
+            link.click();
+        }
+
+        function shareQR() {
+            const img = document.getElementById('thankyou-qr');
+            fetch(img.src).then(r => r.blob()).then(blob => {
+                const file = new File([blob], 'QR-Zahlung_VKZ2026.png', { type: 'image/png' });
+                navigator.share({ files: [file], title: 'Zahlungs-QR-Code' });
+            });
+        }
+
+        function copyIBAN() {
+            navigator.clipboard.writeText("DE05350601902001142022");
+            alert("✅ IBAN kopiert!");
+        }
+
+        window.onload = () => {
+            addChild();
+        };
+
+        document.getElementById('anmeldung-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            await fetch('https://formsubmit.co/haranni@ekvw.de', { method: 'POST', body: formData });
+
+            currentName = `${document.getElementById('vater_vn').value || ''} ${document.getElementById('vater_nn').value || ''}`.trim() || "Ihr Name";
+            const count = document.querySelectorAll('#kinder-container > div').length;
+            const preise = [85, 130, 150, 165, 180];
+            currentBetrag = preise[count] || 180;
+
+            const qrText = `BCD
+001
+1
+SCT
+
+Ev. Kirchenkreis Herne
+DE05350601902001142022
+EUR${currentBetrag}.00
+
+VKZ 2026 + ${currentName}`;
+            const encoded = encodeURIComponent(qrText);
+            document.getElementById('thankyou-qr').src = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encoded}`;
+
+            this.classList.add('hidden');
+            document.getElementById('thankyou').classList.remove('hidden');
+        });
+    </script>
+</body>
+</html>

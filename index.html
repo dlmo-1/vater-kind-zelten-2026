@@ -175,7 +175,14 @@
         }
 
         function updatePriceAndQR() {
-            const count = document.querySelectorAll('#kinder-container > div').length;
+            let count = 0;
+            const children = document.querySelectorAll('#kinder-container > div');
+            children.forEach(c => {
+                const vn = c.querySelector('.child-vn').value.trim();
+                const nn = c.querySelector('.child-nn').value.trim();
+                if (vn || nn) count++;          // ← Nur zählen, wenn Name drinsteht
+            });
+
             const preise = [85, 130, 150, 165, 180];
             currentBetrag = preise[count] || 180;
             document.getElementById('gesamtpreis').textContent = currentBetrag + " €";
@@ -241,7 +248,7 @@ VKZ 2026 + ${currentName}`;
         }
 
         window.onload = () => {
-            addChild();
+            addChild();   // leeres Kind wird angezeigt, Preis bleibt aber 85 €
         };
 
         document.getElementById('anmeldung-form').addEventListener('submit', async function(e) {
@@ -250,20 +257,6 @@ VKZ 2026 + ${currentName}`;
             await fetch('https://formsubmit.co/haranni@ekvw.de', { method: 'POST', body: formData });
 
             currentName = `${document.getElementById('vater_vn').value || ''} ${document.getElementById('vater_nn').value || ''}`.trim() || "Ihr Name";
-            const count = document.querySelectorAll('#kinder-container > div').length;
-            const preise = [85, 130, 150, 165, 180];
-            currentBetrag = preise[count] || 180;
-
-            const qrText = `BCD
-001
-1
-SCT
-Ev. Kirchenkreis Herne
-DE05350601902001142022
-EUR${currentBetrag}.00
-VKZ 2026 + ${currentName}`;
-            const encoded = encodeURIComponent(qrText);
-            document.getElementById('thankyou-qr').src = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encoded}`;
 
             this.classList.add('hidden');
             document.getElementById('thankyou').classList.remove('hidden');
